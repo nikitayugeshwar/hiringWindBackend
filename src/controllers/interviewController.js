@@ -33,3 +33,23 @@ exports.create = async (req, res) => {
     });
   }
 };
+
+exports.getQuestions = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await interview.findById(id);
+    res
+      .status(200)
+      .json({
+        message: "questions fetched successfully",
+        success: true,
+        data: response,
+      });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: "error while getting the questions",
+      error: err.message,
+    });
+  }
+};

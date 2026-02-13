@@ -1,4 +1,4 @@
-const { model } = require("../config/gemini");
+const { generate } = require("../config/gemini");
 
 exports.generateQuestions = async (technology, experience, questionsNumber) => {
   const prompt = `
@@ -19,9 +19,8 @@ Return ONLY valid JSON in this format:
 }
 `;
 
-  const result = await model.generateContent(prompt);
-  const response = await result.response;
-  const text = response.text().replace(/```json|```/g, "");
+  // generate() now returns text directly
+  const text = (await generate(prompt)).replace(/```json|```/g, "");
   const parsed = JSON.parse(text);
 
   return parsed.questions;
