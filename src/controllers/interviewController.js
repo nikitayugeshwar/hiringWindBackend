@@ -38,18 +38,48 @@ exports.getQuestions = async (req, res) => {
   try {
     const { id } = req.params;
     const response = await interview.findById(id);
-    res
-      .status(200)
-      .json({
-        message: "questions fetched successfully",
-        success: true,
-        data: response,
-      });
+    res.status(200).json({
+      message: "questions fetched successfully",
+      success: true,
+      data: response,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({
       message: "error while getting the questions",
       error: err.message,
     });
+  }
+};
+
+exports.getCount = async (req, res) => {
+  try {
+    const response = await interview.countDocuments();
+    console.log("response", response);
+    res.status(200).json({
+      message: "interview count successfully",
+      success: "true",
+      data: response,
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "error while count the interview", error: err.message });
+  }
+};
+
+exports.endInterview = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { questionData } = req.body;
+    const response = await interview.findById(id);
+    res.status(200).json({
+      message: "interview wnd successfully",
+      success: true,
+      data: response,
+    });
+  } catch (err) {
+    consoel.error(err);
+    res.status(500).json({ message: "abcd", error: err.message });
   }
 };

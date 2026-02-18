@@ -1,5 +1,6 @@
 const user = require("../models/user");
 const nodemailer = require("nodemailer");
+const jwt = require("jsonwebtoken");
 
 exports.createUser = async (req, res) => {
   try {
@@ -24,15 +25,25 @@ exports.login = async (req, res) => {
     if (!existUser) {
       return res.status(400).json({ message: "Correct password daal BSDK" });
     }
+    const token = jwt.sign({ id: existUser._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     res.status(200).json({ message: "user login successfully", success: true });
   } catch (err) {
     res.status(500).json({ message: "error while login", error: err.message });
   }
 };
 
-exports.getUser = async (req, res) => {
+exports.getUserById = async (req, res) => {
   try {
-    const response = await user.find();
+    const { id } = req.user;
+    const response = await user.find(id);
     res.status(200).json({
       message: "user fetched successfully",
       success: true,
