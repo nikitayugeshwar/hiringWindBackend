@@ -72,14 +72,36 @@ exports.endInterview = async (req, res) => {
   try {
     const { id } = req.params;
     const { questionData } = req.body;
+
+    console.log("Received ID:", id);
+    console.log("Type of ID:", typeof id);
+
     const response = await interview.findById(id);
+
+    if (!response) {
+      return res.status(404).json({
+        message: "Interview not found",
+        success: false,
+      });
+    }
+    response.questions.forEach((q) => {
+      const matchQuestions = questionData.find(
+        (item) => item.question === q.question,
+      );
+
+      if (matchQuestions) {
+        q.userAnswer = matchQuestions.userAnswer;
+      }
+    });
+
+    await response.save();
     res.status(200).json({
       message: "interview wnd successfully",
       success: true,
       data: response,
     });
   } catch (err) {
-    consoel.error(err);
+    console.error(err);
     res.status(500).json({ message: "abcd", error: err.message });
   }
 };
