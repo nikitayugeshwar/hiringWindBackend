@@ -109,3 +109,16 @@ exports.resetPassword = async (req, res) => {
       .json({ message: "errro while reset password", error: err.message });
   }
 };
+
+exports.logout = (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: false, // true in production (https)
+    sameSite: "lax",
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: "Logged out successfully",
+  });
+};
