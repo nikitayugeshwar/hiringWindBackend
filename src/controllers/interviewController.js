@@ -3,7 +3,8 @@ const { generateQuestions } = require("../utils/generateQuestions.js");
 
 exports.create = async (req, res) => {
   try {
-    const { technology, experience, questionsNumber } = req.body;
+    const { technology, experience, questionsNumber, userId } = req.body;
+    console.log("req.body.userId", req.body.userId);
 
     // 🔥 generate AI questions
     const questions = await generateQuestions(
@@ -14,6 +15,7 @@ exports.create = async (req, res) => {
     console.log("questions", questions);
 
     const response = await interview.create({
+      userId,
       technology,
       experience,
       questionsNumber,
@@ -72,10 +74,6 @@ exports.endInterview = async (req, res) => {
   try {
     const { id } = req.params;
     const { questionData } = req.body;
-
-    console.log("Received ID:", id);
-    console.log("Type of ID:", typeof id);
-
     const response = await interview.findById(id);
 
     if (!response) {
@@ -103,5 +101,27 @@ exports.endInterview = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "abcd", error: err.message });
+  }
+};
+
+exports.getInterviewListByUserId = async (req, res) => {
+  try {
+    const { id } = req.user;
+    const response = await interview.find({ userId: id });
+    res
+      .status(200)
+      .json({
+        message: "interview list fetched successfully",
+        success: true,
+        data: response,
+      });
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({
+        message: "errro while getting unterview list by id",
+        error: err.message,
+      });
   }
 };

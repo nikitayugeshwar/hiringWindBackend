@@ -43,13 +43,17 @@ exports.login = async (req, res) => {
 exports.getUserById = async (req, res) => {
   try {
     const { id } = req.user;
-    const response = await user.find(id);
+    console.log("req.user", req.user);
+    const response = await user
+      .findOne({ _id: id })
+      .select({ pass: -1, name: 1 });
     res.status(200).json({
       message: "user fetched successfully",
       success: true,
       data: response,
     });
   } catch (err) {
+    console.error(err);
     res
       .status(500)
       .json({ message: "message while getting the user", error: err.message });
