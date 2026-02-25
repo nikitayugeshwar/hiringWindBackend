@@ -5,6 +5,7 @@ const {
   getCount,
   endInterview,
   getInterviewListByUserId,
+  getInterview,
 } = require("../controllers/interviewController");
 const { authMiddleware } = require("../middleware/authMiddleware");
 const router = express.Router();
@@ -18,5 +19,6 @@ router.get(
   authMiddleware,
   getInterviewListByUserId,
 );
+router.get("/getInterview", getInterview);
 
 module.exports = router;
