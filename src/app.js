@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const connectDb = require("./config/db");
 const userRoute = require("./routes/userRoute");
 const interviewRoute = require("./routes/interviewRoute");
+const companyRoute = require("./routes/companyRoute");
 connectDb();
 const cors = require("cors");
 
@@ -20,6 +21,7 @@ app.get("/", (req, res) => {
 });
 app.use("/api/user", userRoute);
 app.use("/api/interview", interviewRoute);
+app.use("/api/company", companyRoute);
 
 // app.listen(process.env.PORT, () => {
 //   console.log(`Server running on port ${process.env.PORT}`);
