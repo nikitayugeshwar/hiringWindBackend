@@ -9,6 +9,7 @@ const userRoute = require("./routes/userRoute");
 const interviewRoute = require("./routes/interviewRoute");
 const companyRoute = require("./routes/companyRoute");
 const jobRoutes = require("./routes/jobRoutes");
+const appliedJobRoute = require("./routes/appliedJobRoute");
 connectDb();
 // connectRedis();
 const cors = require("cors");
@@ -27,6 +28,7 @@ app.use("/api/user", userRoute);
 app.use("/api/interview", interviewRoute);
 app.use("/api/company", companyRoute);
 app.use("/api/job", jobRoutes);
+app.use("/api/appliedJob", appliedJobRoute);
 
 // app.listen(process.env.PORT, () => {
 //   console.log(`Server running on port ${process.env.PORT}`);

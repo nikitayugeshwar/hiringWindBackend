@@ -93,3 +93,36 @@ exports.updateJob = async (req, res) => {
       .json({ message: "error while uodateing the job", error: err.message });
   }
 };
+
+exports.fetchedJobById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await job.findById(id);
+    res.status(200).json({
+      message: "job by id fetched successfully",
+      success: true,
+      data: response,
+    });
+  } catch (err) {
+    console.error(err.message);
+    res
+      .status(500)
+      .json({ message: "errro while fetching job by id", error: err.message });
+  }
+};
+
+exports.getAllJob = async (req, res) => {
+  try {
+    const response = await job.find();
+    res.status(200).json({
+      message: "all jobs fetched successfully",
+      success: true,
+      data: response,
+    });
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ message: "error while fetching all jobs", error: err.message });
+  }
+};
