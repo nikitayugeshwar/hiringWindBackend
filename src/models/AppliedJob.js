@@ -28,6 +28,9 @@ const AppliedJobSchema = new mongoose.Schema({
   jobId: {
     type: String,
   },
+  status: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("AppliedJob", AppliedJobSchema);

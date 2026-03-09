@@ -1,3 +1,4 @@
+const AppliedJob = require("../models/AppliedJob");
 const job = require("../models/job");
 
 exports.create = async (req, res) => {
@@ -115,16 +116,35 @@ exports.fetchedJobById = async (req, res) => {
 
 exports.getAllJob = async (req, res) => {
   try {
-    const response = await job.find();
+    const studentId = req.user.id;
+    console.log("studentId", studentId);
+
+    const jobData = await job.find().lean();
+
+    const updatedJobs = await Promise.all(
+      jobData.map(async (item) => {
+        const appliedJob = await AppliedJob.findOne({
+          studentId: studentId,
+          jobId: item._id.toString(),
+        }).select("status");
+
+        return {
+          ...item,
+          status: appliedJob ? appliedJob.status : "Apply now",
+        };
+      }),
+    );
+
     res.status(200).json({
       message: "all jobs fetched successfully",
       success: true,
-      data: response,
+      data: updatedJobs,
     });
   } catch (err) {
     console.error(err);
-    res
-      .status(500)
-      .json({ message: "error while fetching all jobs", error: err.message });
+    res.status(500).json({
+      message: "error while fetching all jobs",
+      error: err.message,
+    });
   }
 };

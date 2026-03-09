@@ -50,6 +50,7 @@ exports.create = async (req, res) => {
       resumeUrl,
       studentId,
       jobId,
+      status: "Applied",
     });
 
     return res.status(201).json({
@@ -67,29 +68,20 @@ exports.create = async (req, res) => {
   }
 };
 
-exports.getAllJob = async (req, res) => {
+exports.getJobById = async (req, res) => {
   try {
-    const response = await AppliedJob.find();
+    const { jobId } = req.params;
+    const response = await AppliedJob.find({ jobId });
     res.status(200).json({
-      message: "all jobs fetched successfully",
+      message: "data found successfully",
       success: true,
       data: response,
     });
   } catch (err) {
     console.error(err);
-    res
-      .status(500)
-      .json({ message: "error while getting the job", error: err.message });
+    res.status(500).json({
+      message: "error while getting the job by id",
+      error: err.message,
+    });
   }
 };
-
-// exports.getJobById = async(req, res)=>{
-//   try{
-//    const {id} = req.body
-//    const response = await
-//   }
-//   catch(err){
-//     console.error(err)
-//     res.status(500).json({message:"error while getting job by Id", error:err.message})
-//   }
-// }
