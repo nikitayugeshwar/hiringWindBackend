@@ -45,9 +45,7 @@ exports.create = async (req, res) => {
 exports.getJobComapnyId = async (req, res) => {
   try {
     const { id } = req.company;
-    console.log("req.company", req.company);
     const response = await job.find({ companyId: id });
-    console.log("response", response);
     res.status(200).json({
       message: "job fetched successfully",
       success: true,
@@ -117,8 +115,6 @@ exports.fetchedJobById = async (req, res) => {
 exports.getAllJob = async (req, res) => {
   try {
     const studentId = req.user.id;
-    console.log("studentId", studentId);
-
     const jobData = await job.find().lean();
 
     const updatedJobs = await Promise.all(

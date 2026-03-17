@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 
+
 exports.companyMiddleware = (req, res, next) => {
   const companyToken = req.cookies?.companyToken;
 

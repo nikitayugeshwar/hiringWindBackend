@@ -24,9 +24,11 @@ const AppliedJobSchema = new mongoose.Schema({
   },
   studentId: {
     type: String,
+    ref: "student",
   },
   jobId: {
     type: String,
+    ref: "job",
   },
   status: {
     type: String,

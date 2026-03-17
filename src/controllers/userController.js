@@ -21,9 +21,15 @@ exports.createUser = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const existUser = await user.findOne({ email, password });
+    const existUser = await user.findOne({ email });
+    console.log("existUser", existUser);
     if (!existUser) {
       return res.status(400).json({ message: "Correct password daal BSDK" });
+    }
+    const isMatch = await existUser.comparePassword(password);
+    console.log("isMatch", isMatch);
+    if (!isMatch) {
+      return res.status(400).json({ messsage: "invalid password" });
     }
     const token = jwt.sign({ id: existUser._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",

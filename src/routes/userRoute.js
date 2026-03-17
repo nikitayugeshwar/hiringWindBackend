@@ -16,7 +16,10 @@ router.post("/sendOtp", sendOtp);
 router.post("/resetPassword", resetPassword);
 router.get("/getUserById", authMiddleware, getUserById);
 router.get("/isAuthenticated", authMiddleware, (req, res) => {
-  return res.status(200).json({ message: "authenticated", success: true });
+  const studentId = req.user.id;
+  return res
+    .status(200)
+    .json({ message: "authenticated", success: true, data: studentId });
 });
 router.post("/logout", logout);
 
