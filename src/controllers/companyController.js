@@ -49,7 +49,7 @@ exports.login = async (req, res) => {
     res.cookie("companyToken", token, {
       httpOnly: true,
       sameSite: "none",
-      secure: true,
+      secure: false,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
