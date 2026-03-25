@@ -14,9 +14,9 @@ connectDb();
 // connectRedis();
 const cors = require("cors");
 
-// app.get("/", (req, res) => {
-//   res.send("Page is visible");
-// });
+app.get("/api/check", (req, res) => {
+  res.send("check is visible");
+});
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
