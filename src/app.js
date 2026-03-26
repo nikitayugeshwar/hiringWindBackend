@@ -11,6 +11,7 @@ const companyRoute = require("./routes/companyRoute");
 const jobRoutes = require("./routes/jobRoutes");
 const appliedJobRoute = require("./routes/appliedJobRoute");
 connectDb();
+
 // connectRedis();
 const cors = require("cors");
 
