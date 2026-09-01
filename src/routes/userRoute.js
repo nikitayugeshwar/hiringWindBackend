@@ -5,6 +5,8 @@ const {
   sendOtp,
   resetPassword,
   getUserById,
+  updateUser,
+  getDashboardStats,
   logout,
 } = require("../controllers/userController");
 const { authMiddleware } = require("../middleware/authMiddleware");
@@ -15,6 +17,8 @@ router.post("/login", login);
 router.post("/sendOtp", sendOtp);
 router.post("/resetPassword", resetPassword);
 router.get("/getUserById", authMiddleware, getUserById);
+router.put("/updateUser", authMiddleware, updateUser);
+router.get("/dashboardStats", authMiddleware, getDashboardStats);
 router.get("/isAuthenticated", authMiddleware, (req, res) => {
   const studentId = req.user.id;
   return res

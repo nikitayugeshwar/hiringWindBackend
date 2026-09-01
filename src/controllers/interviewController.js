@@ -2,10 +2,40 @@ const interview = require("../models/interview");
 const { generateQuestions } = require("../utils/generateQuestions.js");
 const { calculateAccuracy } = require("../utils/accuracyService.js");
 
+// An interview is "Completed" once every question carries an answer.
+const summarise = (item) => {
+  const questions = item.questions || [];
+  const answered = questions.filter((q) => q.userAnswer).length;
+  const score = questions.length
+    ? Math.round(
+        questions.reduce((sum, q) => sum + (q.accuracy || 0), 0) /
+          questions.length,
+      )
+    : 0;
+
+  return {
+    answered,
+    score,
+    status:
+      answered === 0
+        ? "Not started"
+        : answered === questions.length
+          ? "Completed"
+          : "In Progress",
+  };
+};
+
 exports.create = async (req, res) => {
   try {
-    const { technology, experience, questionsNumber, userId } = req.body;
-    console.log("req.body.userId", req.body.userId);
+    const { technology, experience, questionsNumber } = req.body;
+    const userId = req.user.id;
+
+    if (!technology || !experience || !questionsNumber) {
+      return res.status(400).json({
+        message: "technology, experience and questionsNumber are required",
+        success: false,
+      });
+    }
 
     // 🔥 generate AI questions
     const questions = await generateQuestions(
@@ -13,7 +43,6 @@ exports.create = async (req, res) => {
       experience,
       questionsNumber,
     );
-    console.log("questions", questions);
 
     const response = await interview.create({
       userId,
@@ -41,6 +70,18 @@ exports.getQuestions = async (req, res) => {
   try {
     const { id } = req.params;
     const response = await interview.findById(id);
+
+    if (!response) {
+      return res
+        .status(404)
+        .json({ message: "interview not found", success: false });
+    }
+    if (response.userId !== req.user.id) {
+      return res
+        .status(403)
+        .json({ message: "this interview is not yours", success: false });
+    }
+
     res.status(200).json({
       message: "questions fetched successfully",
       success: true,
@@ -58,10 +99,9 @@ exports.getQuestions = async (req, res) => {
 exports.getCount = async (req, res) => {
   try {
     const response = await interview.countDocuments();
-    console.log("response", response);
     res.status(200).json({
       message: "interview count successfully",
-      success: "true",
+      success: true,
       data: response,
     });
   } catch (err) {
@@ -85,12 +125,18 @@ exports.endInterview = async (req, res) => {
       });
     }
 
+    if (response.userId !== req.user.id) {
+      return res
+        .status(403)
+        .json({ message: "this interview is not yours", success: false });
+    }
+
     for (const q of response.questions) {
-      const matchQuestion = questionData.find(
+      const matchQuestion = (questionData || []).find(
         (item) => item.question === q.question,
       );
 
-      if (matchQuestion) {
+      if (matchQuestion && matchQuestion.userAnswer) {
         q.userAnswer = matchQuestion.userAnswer;
 
         // 🔥 Call service here
@@ -121,16 +167,20 @@ exports.endInterview = async (req, res) => {
 exports.getInterviewListByUserId = async (req, res) => {
   try {
     const { id } = req.user;
-    const response = await interview.find({ userId: id });
+    const response = await interview
+      .find({ userId: id })
+      .sort({ createdAt: -1 })
+      .lean();
+
     res.status(200).json({
       message: "interview list fetched successfully",
       success: true,
-      data: response,
+      data: response.map((item) => ({ ...item, ...summarise(item) })),
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({
-      message: "errro while getting unterview list by id",
+      message: "error while getting interview list by id",
       error: err.message,
     });
   }

@@ -10,10 +10,10 @@ const {
 const { authMiddleware } = require("../middleware/authMiddleware");
 const router = express.Router();
 
-router.post("/create", create);
-router.get("/getQuestions/:id", getQuestions);
+router.post("/create", authMiddleware, create);
+router.get("/getQuestions/:id", authMiddleware, getQuestions);
 router.get("/getCount", getCount);
-router.post("/endInterview/:id", endInterview);
+router.post("/endInterview/:id", authMiddleware, endInterview);
 router.get(
   "/getInterviewListByUserId",
   authMiddleware,
